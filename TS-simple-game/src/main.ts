@@ -1,3 +1,3 @@
-import Game from "./Game.ts";
+import { Arena } from './Arena';
 
-const game:Game = new Game();
+const arena = new Arena();
