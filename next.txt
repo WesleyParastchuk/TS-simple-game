@@ -1,1 +1,4 @@
-Corrigir colisao com paredes
+Ajustar border
+
+BUGS
+- Diagonal andar mais rápido

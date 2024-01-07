@@ -40,11 +40,13 @@ export type playerConfigType = {
 };
 
 export type moveConfigType = {
-	[key in "up" | "down" | "left" | "right"]: {
+	[key in keys]: {
 		buttons: directionButtons[];
 		calc: movesCalc;
 	};
 };
+
+export type keys = "up" | "down" | "left" | "right"
 
 export type directionButtons =
 	| "ArrowUp"
