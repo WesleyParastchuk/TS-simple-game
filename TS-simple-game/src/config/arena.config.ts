@@ -1,4 +1,6 @@
-export const arenaConfig = {
+import { arenaConfigType } from "./types";
+
+export const arenaConfig: arenaConfigType = {
 	width: 800,
 	height: 600,
 	style: {
@@ -9,5 +11,5 @@ export const arenaConfig = {
 	},
 	father: document.querySelector("main"),
 	id: "arena",
-    unit: "px",
+	unit: "px",
 };

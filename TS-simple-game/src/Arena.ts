@@ -6,9 +6,9 @@ export class Arena {
 	private _height: number;
 	private _style: ArenaStyle | null;
 	private _element: HTMLElement | null;
-	private _fatherElement: HTMLElement | null;
+	private _fatherElement: Element | null;
 	private _unit: dimension["unit"];
-    private _created: boolean;
+	private _created: boolean;
 
 	constructor({
 		width,
@@ -19,24 +19,25 @@ export class Arena {
 		height: number;
 		style: ArenaStyle;
 	} = arenaConfig) {
-        this._created = false;
+		this._created = false;
 		this._width = width;
 		this._height = height;
 		this._style = style;
 		this._fatherElement = arenaConfig.father;
 		this._element = null;
-		this._unit = arenaConfig.unit as dimension["unit"];
+		this._unit = arenaConfig.unit;
 		this.create();
 	}
 
 	private create(): void {
 		this._element = document.createElement("div");
 		this._element.id = arenaConfig.id;
+		console.log(this._element);
 		this._element.style.width = this._width + this._unit;
 		this._element.style.height = this._height + this._unit;
 		this.setStyle();
 		this._fatherElement!.append(this._element);
-        this._created = true;
+		this._created = true;
 	}
 
 	setStyle(): void {
@@ -48,15 +49,15 @@ export class Arena {
 		}
 	}
 
-	protected get width(): dimension {
+	public get width(): dimension {
 		return { num: this._width, unit: this._unit };
 	}
 
-	protected get height() {
+	public get height() {
 		return { num: this._height, unit: this._unit };
 	}
 
-    public get created() {
-        return this._created;
-    }
+	public get created() {
+		return this._created;
+	}
 }
