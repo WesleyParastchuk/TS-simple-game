@@ -1,5 +1,5 @@
 import { arenaConfig } from "./config/arena.config";
-import { ArenaStyle, dimension } from "./types";
+import { ArenaStyle, dimension } from "./config/types";
 
 export class Arena {
 	private _width: number;
@@ -8,6 +8,7 @@ export class Arena {
 	private _element: HTMLElement | null;
 	private _fatherElement: HTMLElement | null;
 	private _unit: dimension["unit"];
+    private _created: boolean;
 
 	constructor({
 		width,
@@ -18,6 +19,7 @@ export class Arena {
 		height: number;
 		style: ArenaStyle;
 	} = arenaConfig) {
+        this._created = false;
 		this._width = width;
 		this._height = height;
 		this._style = style;
@@ -33,7 +35,8 @@ export class Arena {
 		this._element.style.width = this._width + this._unit;
 		this._element.style.height = this._height + this._unit;
 		this.setStyle();
-		this._fatherElement!.appendChild(this._element);
+		this._fatherElement!.append(this._element);
+        this._created = true;
 	}
 
 	setStyle(): void {
@@ -52,4 +55,8 @@ export class Arena {
 	protected get height() {
 		return { num: this._height, unit: this._unit };
 	}
+
+    public get created() {
+        return this._created;
+    }
 }
