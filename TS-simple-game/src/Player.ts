@@ -1,5 +1,12 @@
 import { playerConfig } from "./config/player.config";
-import { dimension, playerStyle, movesCalc, keys } from "./config/types";
+import {
+	dimension,
+	playerStyle,
+	movesCalc,
+	keys,
+	directionButtons,
+	arenaConfigType,
+} from "./config/types";
 import { moveConfig, moves } from "./config/move.config";
 import { arenaConfig } from "./config/arena.config";
 
@@ -45,60 +52,65 @@ export class Player {
 	}
 
 	private init(): void {
-		const keys: { [key: string]: boolean } = Object.values(
+		const keys: { [key in directionButtons]?: boolean } = Object.values(
 			moveConfig
-		).reduce((acc, curr) => {
-			curr.buttons.forEach(button => {
+		).reduce((acc: { [key in directionButtons]?: boolean }, curr) => {
+			curr.buttons.forEach((button: directionButtons) => {
 				acc[button] = false;
 			});
 			return acc;
-		}, {});
+		}, {} as { [key in directionButtons]?: boolean });
 
 		document.addEventListener("keydown", e => {
-			if (e.key in keys) keys[e.key as keyof typeof keys] = true;
+			if (e.key in keys) keys[e.key as directionButtons] = true;
 		});
 
 		document.addEventListener("keyup", e => {
-			if (e.key in keys) keys[e.key as keyof typeof keys] = false;
+			if (e.key in keys) keys[e.key as directionButtons] = false;
 		});
 
 		this._loop = setInterval(() => {
-			this.move(keys);
+			this.move(keys as { [key in directionButtons]: boolean });
 		}, 10 / this.speed);
 	}
 
-	private move(keys: { [key: string]: boolean }): void {
-		//Recebe todos os valores de calc das direções que estão sendo pressionadas, evitando que W e Up sejam pressionados ao mesmo tempo.
+	private move(keys: { [key in directionButtons]: boolean }): void {
 		const direction = Object.keys(keys).reduce((acc, curr) => {
-			if (keys[curr] && !acc.includes(moves[curr])) {
-				acc.push(moves[curr]);
+			if (keys[curr as directionButtons] && !acc.includes(moves[curr as directionButtons])) {
+				acc.push(moves[curr as directionButtons]);
 			}
 			return acc;
-		}, [] as string[]);
+		}, [] as movesCalc[]);
 
-		//Realiza a movimentação de cada direção que está sendo pressionada.
 		Object.entries(moves).forEach(([key, value]) => {
-			if (direction && direction.includes(moves[key])) {
-				if(this.canMove(value, moves[key])){
+			if (direction && direction.includes(value)) {
+				if (this.canMove(value, key as keys)) {
 					this._element!.style[value.axis] =
-					(
-						parseInt(this._element!.style[value.axis]) +
-						(value.operation === "+" ? 1 : -1)
-					).toString() + "px";
+						(
+							parseInt(this._element!.style[value.axis]) +
+							(value.operation === "+" ? 1 : -1)
+						).toString() + "px";
 				}
 			}
 		});
 	}
 
-	canMove({axis, operation}: movesCalc, direction: keys): boolean{
+	canMove({ axis, operation }: movesCalc, direction: keys): boolean {
 		const styleSelector = {
 			top: "height",
-			left: "width"
+			left: "width",
+		};
+		const nextPosition =
+			parseInt(this._element!.style[axis]) + (operation === "+" ? 1 : -1);
+		const arenaSize = arenaConfig[styleSelector[axis] as keyof arenaConfigType];
+		if (arenaSize && typeof arenaSize === "number") {
+			if (["up", "left"].includes(direction)) {
+				return nextPosition > 0 && nextPosition < arenaSize;
+			} else {
+				return nextPosition > 0 && nextPosition < arenaSize - this._size;
+			}
 		}
-		const nextPosition = parseInt(this._element!.style[axis]) + (operation === "+" ? 1 : -1);
-		if(["up", "left"].includes(direction))
-			return nextPosition > 0 && nextPosition < arenaConfig[styleSelector[axis]];
-		return nextPosition > 0 && nextPosition < arenaConfig[styleSelector[axis]] - this._size;
+		return false;
 	}
 
 	setStyle(): void {
@@ -110,14 +122,17 @@ export class Player {
 		}
 	}
 
+	// @ts-ignore
 	private start(): void {
 		this.init();
 	}
 
+	// @ts-ignore
 	private stop(): void {
 		clearInterval(this._loop);
 	}
 
+	// @ts-ignore
 	private destroy(): void {
 		this._element!.remove();
 		this._created = false;

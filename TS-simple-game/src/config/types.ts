@@ -46,7 +46,7 @@ export type moveConfigType = {
 	};
 };
 
-export type keys = "up" | "down" | "left" | "right"
+export type keys = "up" | "down" | "left" | "right";
 
 export type directionButtons =
 	| "ArrowUp"

@@ -40,4 +40,4 @@ export const moves: { [key in directionButtons]: movesCalc } = {
 	s: moveConfig.down.calc,
 	a: moveConfig.left.calc,
 	d: moveConfig.right.calc,
-};
+} as { [key in directionButtons]: movesCalc };
